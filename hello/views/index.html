@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script type="text/javascript" src="/js/jquery.js"></script>
+
+<script>
+    $().ready(function(){//当页面加载完之后执行
+    list()
+ })
+function list()
+{
+ $.get('/todo/list',function(data){
+//   $("#tbl tr:gt(0)").empty()
+    $("#tbl tr:gt(0)").remove()
+   for(var i=0;i<data.length;i++){
+  				var newRow = "<tr><td>"+data[i].id
+                      +"</td><td><img src = "+ data[i].id +".jpg height= 40 width= 40>"
+  							+"</td><td>"+data[i].jokname
+                +"</td><td>"+data[i].content
+  							+"</td><td><a href='#' onclick='del("+data[i].id+")'>删除</a></td></tr>"
+  				$("#tbl tr:last").after(newRow)
+        //  		$("#tbl tr:last").append(newRow)
+  // alert(data[0].name)
+ }})
+
+}
+function add()
+{
+       var taskname = $('#taskname').val();
+     var task = $('#task').val();
+   		$.get('/todo/add/'+taskname+"/"+task,function(data,status){
+            list();
+            alert("id:"+data.id+ "添加成功")
+		})
+
+}
+function del(id)
+{
+    // var id = $('#id').val();
+ 	$.get('/todo/del/'+id,function(data,status){
+       list();
+       if(data != null){
+        alert("删除成功")
+       }else{
+          alert("删除失败")
+       }
+       
+
+		})
+
+}
+function get()
+{
+       var id = $('#id').val();
+}
+function fileupload()
+{
+        alert("11成功")
+       $.post('/file_upload')
+       
+}
+function update()
+{
+     var id = $('#id').val();
+     var taskname = $('#taskname').val();
+     var task = $('#task').val();
+  	$.get('/todo/update/'+id+"/"+taskname+"/"+task,function(data,status){
+       list();
+       if(data != null){
+        alert("更新成功")
+       }else{alert("更新失败")}
+      
+     
+		})
+   //  var id = document.getElementById("id").value;
+   //  var taskname = document.getElementById("taskname").value;
+  //   var task = document.getElementById("task").value;
+ //  window.location.href = "http://127.0.0.1:8888/todo/update/"+id+"/"+taskname;
+
+}
+function exit()
+{
+   window.location.href = "http://127.0.0.1:8888/todo/exit";
+}
+
+//document.write(jsondata)
+//<h1 onclick="list()">list button  </h1>
+// <button type="button" id = "get" onclick="get()"> get button</button>
+ //      <input type="text" id = "txtName">  </input>
+ //    <h1 id = "textname"> jquery 根据 id 查值 </h1>
+// <button type="button" id = "btn1" > 点  </button>
+//  <button type="button" id = "del" onclick="del()"> del button</button>
+// <body  style=background-image: url(.jpg) bgcolor="green"> 
+ // <input type="submit" onclick="fileupload()" value="上传文件" />
+</script>
+<style type="text/css"> 
+  p {text-align: center }
+ </style>  
+</head>
+<body  style=background-image:url(2.jpeg) no-repeat 50% 0;>   
+  <h3>文件上传：</h3>
+  选择一个文件上传: <br />
+  <form action="/file_upload" method="post" enctype="multipart/form-data">
+  <input type="file" name="excelfile" />
+  <br />
+  <input type="submit"  value="上传文件" />
+  </form>
+  
+<p>古诗ID: <input id="id" type="text" name="id">
+ 古诗名  :  <input id="taskname" type="text" name="taskname">
+    古诗内容:  <input id="task" type="text" name="task"></p>
+<center>
+  <button type="button" id = "add" onclick="add()"> 添加</button>
+  <button type="button" id = "update" onclick="update()"> 更新</button>
+  <button type="button" id = "exit" onclick="exit()"> 退出</button>
+</center>
+
+<span style="white-space:pre"> </span>
+<p>  </p>
+
+	<table id="tbl">
+	<tr><th>编号</th><th>古诗图片</th><th>古诗名称</th><th>内容</th></tr>
+	</table>
+
+</body>
+</html>
