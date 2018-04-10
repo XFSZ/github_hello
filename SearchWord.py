@@ -4,45 +4,54 @@ import re
 import chardet
 import sys
 import codecs
+import json
 reload(sys)   
 sys.setdefaultencoding('utf-8')  
-name = '乔峰'
-text = '''段誉的六卖神贱，虚竹的酒色为善佛祖皆空。虚竹的酒色为善佛乔峰。降龙无敌手，丐帮帮主乔峰。'''
-print(name)
-print(text)
+#if __name__=="__main__":  
+name = ''
+text = ''
+ki = []
+#print(name)
+#print(text)
 name = sys.argv[1]
-print(name)
-print(chardet.detect(name))
+wordtext = sys.argv[2]
+#print(type(wordtext))
+#print(chardet.detect(name))
 #name =  name.decode('ISO-8859-1').encode('utf-8')
-name =  name.decode("gbk").encode('utf8') 
-print("name" , chardet.detect(name))
-print(name)  
-#text = open("uiop1.txt",mode='r')
-text = codecs.open("uiop1.txt",mode='r',encoding='GB2312')
-text1 = text.read()
-text.close()
+name =  name.decode("gbk").encode('utf-8') 
+#print("name" , chardet.detect(name))
+#print(name)  
+text = open(wordtext,mode='r')
+#text = codecs.open(wordtext,mode='r',encoding='gbk')
 #print(chardet.detect(text))
-text1 =  text1.encode('utf-8')
-print("text",chardet.detect(text1))   
+text1 = text.read()
+text1 = text1.decode('gbk').encode('utf-8')
+text.close()
+#print(chardet.detect(text1))
+#text1 =  text1.encode('utf-8')
+#print("text",chardet.detect(text1))   
 #name = name.decode('gbk')
 #print(name)
 #print(text1)
 ret = '[^。]*?{}[^。]*?。'
-print(chardet.detect(ret))
-print(ret)
-#'[^。]*?{}[^。]*?。'
+#print(chardet.detect(ret))
+#print(ret)
 #print(ret)
 #print(text.readlines())
-#name = '乔峰'
-#text1 = '''段誉的六卖神贱，虚竹的酒色为善佛祖皆空。虚竹的酒色为善乔峰。降龙无敌手，丐帮帮主乔峰。'''
 #print("name" , chardet.detect(name))
 #print("text",chardet.detect(text1)) 
 #text1 =  text1.decode('utf-8')
 results = re.findall(r'[^。]*?{}[^。]*?。'.format(name), text1)
-print(results) 
-text1 =  text1.decode('utf-8')
-print(text1)
+#print(results) 
+#text1 =  text1.decode('utf-8')
+#print(text1)
 for i, r in enumerate(results, 1):
-    print(i, r.decode('utf-8'))
-    r= r.decode('utf-8')
-    print(r)
+    #print(i, r)
+   # r = r.decode('utf-8')
+    r =  unicode( r, errors='ignore')
+    obj = {"name":r,"count": str(i)}
+    #unicode( obj, errors='ignore')
+    #obj = obj.decode('utf-8')
+    ki.append(obj)
+   
+print(json.dumps(ki ))

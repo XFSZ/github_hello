@@ -9,10 +9,13 @@ var nodejieba = require("nodejieba");
 var exec = require('child_process').exec;
 var exceldata = []
 var txtdata = []
+var worddata = []
 var idlength = 0
 var filename = 'fencitongji.py'
+var pythonscriptname = 'SearchWord.py'
 var arg1 = ''
 var judgement = true;
+var filepath= ''
 //global 全局变量
 var app = express()
 
@@ -47,7 +50,7 @@ app.get('/index.htm', function (req, res) {
     console.log(req.files[0]);  // 上传的文件信息
     var des_file = __dirname + "/Excel/" + req.files[0].originalname;
     var des_file2 = __dirname +"/" + req.files[0].originalname;
-    
+    filepath = req.files[0].originalname;
     fs.readFile( req.files[0].path, function (err, data) {
          fs.writeFile(des_file2, data, function (err) {
           console.log(judgement);
@@ -59,6 +62,7 @@ app.get('/index.htm', function (req, res) {
                 console.log(req.files[0].originalname.split(".")[1])
             }
             if(judgement == false){
+
                 exec('python'+' '+filename+' '+ req.files[0].originalname,function(err,stdout,stderr){
                     if(err)
                     {
@@ -91,6 +95,37 @@ app.get('/index.htm', function (req, res) {
         });
     });
  })
+ app.get('/get/:Word',function(req,res){
+    var task = queryByWord(req.params.Word)
+    res.send(task)
+})
+var queryByWord = function(Word){
+    var task = null
+    console.log(filepath);
+    exec('python'+' '+pythonscriptname+' '+ Word+' '+filepath,function(err,stdout,stderr){
+        console.log('python'+' '+pythonscriptname+' '+ Word+' '+ filepath);
+        if(err)
+        {
+            console.log('stderr',err);
+        }
+        if(stdout)
+        {
+            console.log('stdout',stdout);
+            task = stdout
+            worddata = stdout
+        }
+    
+    });
+    response = {                                    
+        message:'File uploaded successfully',
+        word:  worddata
+        //filename:req.files[0].originalname
+   };
+   console.log( response );         
+  // res.end( JSON.stringify( response ) );
+	return task
+}
+ 
  
 app.use('/todo',todo)
 app.get('/list', function (req, res) {
@@ -98,6 +133,9 @@ app.get('/list', function (req, res) {
 })
 app.get('/txtlist', function (req, res) {
     res.send(txtdata)
+})
+app.get('/wordlist', function (req, res) {
+    res.send(worddata)
 })
 app.get('*',function(req,res){
    
